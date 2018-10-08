@@ -1,0 +1,5 @@
+name: MultiServerChat
+main: me.Client
+version: 0.0.1
+authors: [me]
+description: []
