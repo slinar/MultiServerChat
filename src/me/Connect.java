@@ -14,45 +14,34 @@ public class Connect implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
+        while (Client.run) {
             try {
-
                 while (!Client.status) {
                     Client.sc = SocketChannel.open();
-                    Client.sc.configureBlocking(false);
+                    // Client.sc.configureBlocking(false);
                     boolean a = Client.sc.connect(Client.addr);
                     if (a) {
                         auth();
                         break;
                     }
-
-                    try {
-                        Client.sc.finishConnect();
-                    } catch (Exception e) {
-                    }
-
-                    Thread.sleep(900);
+                    Client.sc.finishConnect();
+                    ClientCore.sleep(900);
                     if (Client.sc.finishConnect()) {
                         auth();
                         break;
                     }
                     Client.sc.close();
-                    // System.out.println(ConfigFile.prefix + ConfigFile.getAddr().toString() + "
-                    // 连接失败，正在重试!");
-                    Thread.sleep(900);
+                    ClientCore.sleep(100);
                 }
-
-            } catch (InterruptedException | IOException e) {
+            } catch (IOException e) {
+                e.printStackTrace();
+                // Client.getIns().getLogger().info("连接时发生异常!");
             }
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-            }
+            ClientCore.sleep(100);
         }
-
     }
 
-    void connected() {
+    private void connected() {
         try {
             Client.sc.configureBlocking(false);
         } catch (IOException e1) {
@@ -65,11 +54,11 @@ public class Connect implements Runnable {
         }
     }
 
-    void auth() {
-        try {
+    private void auth() {
+       /* try {
             Client.sc.configureBlocking(true);
         } catch (IOException e2) {
-        }
+        }*/
         Socket socket = Client.sc.socket();
         try {
             socket.setSoTimeout(1500);
@@ -93,7 +82,7 @@ public class Connect implements Runnable {
             if (isOk.equals("OK")) {
                 connected();
             } else {
-                System.out.println("认证失败");
+                System.out.println(ConfigFile.prefix + "认证失败");
                 Client.sc.close();
             }
         } catch (IOException e) {
@@ -104,4 +93,6 @@ public class Connect implements Runnable {
         }
 
     }
+    
+    
 }

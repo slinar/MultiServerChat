@@ -11,7 +11,7 @@ public class ReadHandle implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
+        while (Client.run) {
             try {
                 if (Client.status && (Client.selector.select() > 0)) {
                     Set<SelectionKey> keys = Client.selector.selectedKeys();

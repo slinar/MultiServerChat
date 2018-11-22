@@ -4,14 +4,11 @@ public class KeepAlive implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
+        while (Client.run) {
             if (Client.status) {
                 ClientCore.write(Client.heat);
             }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-            }
+            ClientCore.sleep(1000);
         }
     }
 }

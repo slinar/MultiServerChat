@@ -13,7 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Client extends JavaPlugin {
 
-    static ExecutorService es = Executors.newFixedThreadPool(4);
+    static ExecutorService es;
     static Selector selector;
     static SocketChannel sc;
     static SelectionKey clientKey;
@@ -22,6 +22,7 @@ public final class Client extends JavaPlugin {
     static String pwd;
     private static Client ins;
     static final String heat = "_ACTIVE_";
+    static boolean run;
 
     /*
      * public static void main(String[] args) { init(); }
@@ -30,12 +31,15 @@ public final class Client extends JavaPlugin {
     @Override
     public void onDisable() {
         HandlerList.unregisterAll(this);
+        run = false;
         es.shutdownNow();
+        
     }
 
     @Override
     public void onEnable() {
         ins = this;
+        run = true;
         getServer().getPluginManager().registerEvents(new PluginListener(), this);
         ConfigFile.loadConfig();
         init();
@@ -43,9 +47,9 @@ public final class Client extends JavaPlugin {
 
     private static void init() {
         try {
+            es = Executors.newFixedThreadPool(4);
             selector = Selector.open();
             addr = ConfigFile.getAddr();
-            System.out.println(ConfigFile.prefix + addr.toString());
             pwd = ConfigFile.getPwd();
             es.execute(new Connect());
             es.execute(new KeepAlive());
@@ -57,4 +61,5 @@ public final class Client extends JavaPlugin {
     public static Client getIns() {
         return ins;
     }
+    
 }
